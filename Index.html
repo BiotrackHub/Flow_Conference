@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Flow Conference — Registration</title>
+  
+  <!-- intl-tel-input CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+
+  <style>
+    /* Minimal styles so the form looks okay when served */
+    :root {
+      --teal: #0f766e;
+    }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;line-height:1.4;padding:24px;background:#f7f7f7}
+    .container{max-width:720px;margin:0 auto;background:#fff;padding:24px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .row{margin-bottom:12px}
+    label{display:block;margin-bottom:6px;font-weight:600}
+    input[type=text],input[type=tel],textarea, select {width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;box-sizing:border-box; font-size: 16px;}
+    
+    /* intl-tel-input specific styles */
+    .iti { width: 100%; }
+    .iti__flag-container { box-sizing: content-box; }
+    
+    .two-up { display: flex; gap: 2%; }
+    .two-up > div { flex: 1; }
+    
+    .actions{margin-top:16px}
+    button{padding:10px 16px;border:none;border-radius:6px;background:var(--teal);color:#fff;font-weight:600;cursor:pointer; transition: background 0.3s;}
+    button:hover:not(:disabled) { background: #0c5f59; }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .status{margin-top:12px; font-weight: 500;}
+    .checkbox{display:flex;align-items:center;gap:8px}
+    .small{font-size:12px;color:#666}
+    
+    /* SUCCESS CARD STYLES */
+    .success {
+      text-align: center;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .success h2 {
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <div class="brand" style="display:flex;gap:12px;align-items:center">
+        <div class="logo" style="font-size:28px; color: var(--teal);">✛</div>
+        <div>
+          <h1 style="margin:0">Flow Conference</h1>
+          <p class="tag small" style="margin:0">A weekend of worship, renewal and community — all are welcome</p>
+        </div>
+      </div>
+      <p class="lead small" style="margin-top:12px">Please fill the form below to register. We'll reserve your spot and share updates.</p>
+    </header>
+
+    <!-- 🚨 CHANGE REQUIRED: Replace the placeholder action with your Formspree endpoint URL -->
+    <form id="registrationForm" class="form" action="https://formspree.io/f/mgvpglqw" method="POST">
+      <div class="row">
+        <label for="fullName">Full names *</label>
+        <input id="fullName" name="Full Name" type="text" placeholder="Jane Doe" required>
+      </div>
+
+      <div class="row two-up">
+        <div>
+          <label for="phone">Phone number *</label>
+          <!-- Note: The name attribute must be unique for Formspree. Changed from 'phone' to 'Phone (E.164)' -->
+          <input id="phone" name="Phone (E.164)" type="tel" required> 
+          <small id="phoneError" style="display:none;color:crimson;margin-top:4px;">Please enter a valid phone number, including country code.</small>
+        </div>
+        <div>
+          <label for="occupation">Occupation</label>
+          <input id="occupation" name="Occupation" type="text" placeholder="Teacher, Developer, Student...">
+        </div>
+      </div>
+
+      <div class="row two-up">
+        <div>
+          <label for="country">Country *</label>
+          <input id="country" name="Country" type="text" placeholder="Kenya" required>
+        </div>
+        <div>
+          <label for="city">City</label>
+          <input id="city" name="City" type="text" placeholder="Nairobi">
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="source">How did you hear about us?</label>
+        <select id="source" name="Source">
+            <option value="">-- Select an option --</option>
+            <option value="Friend/Colleague">Friend/Colleague</option>
+            <option value="Social Media Ad">Social Media Ad</option>
+            <option value="Church/Organization">Church/Organization</option>
+            <option value="Website/Search Engine">Website/Search Engine</option>
+            <option value="Past Attendee">Past Attendee</option>
+            <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label for="accessibility">Accessibility needs</label>
+        <textarea id="accessibility" name="Accessibility Needs" rows="2" placeholder="Let us know any specific arrangements that would help you fully participate."></textarea>
+      </div>
+
+      <div class="row">
+        <label for="special">Special request</label>
+        <textarea id="special" name="Special Request" rows="3" placeholder="Dietary needs, group seating, prayer request... "></textarea>
+      </div>
+
+      <fieldset class="consents" style="border:none;padding:0;margin:0 0 12px 0">
+        <label class="checkbox"><input id="terms" name="Terms Consent" type="checkbox" required> I agree to the <a href="#" target="_blank">terms and conditions</a></label>
+        <label class="checkbox"><input id="marketing" name="Marketing Consent" type="checkbox"> I consent to receive updates and future information about events from Flow</label>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit" id="submitBtn">Register</button>
+      </div>
+
+      <div id="status" role="status" aria-live="polite" class="status"></div>
+    </form>
+    
+    <div id="successPage" class="success" style="display:none;">
+      <h2>✅ Registration Successful</h2>
+      <p>Thank you for registering for Flow Conference 2025! We’ll be in touch soon with more details.</p>
+      <!-- We can't use the Apps Script reload trick anymore, so we just reload the page -->
+      <button class="btn" id="registerAnotherBtn" onclick="window.location.reload()">Register Another</button>
+    </div>
+
+    <footer class="foot small" style="margin-top:18px">
+      <p>Questions? Contact <a href="mailto:info@flowconf.example">info@flowconf.example</a></p>
+      <p class="small">By registering you agree we may store your information to administer your booking.</p>
+    </footer>
+  </main>
+
+  <!-- intl-tel-input scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('registrationForm');
+      const statusEl = document.getElementById('status');
+      const submitBtn = document.getElementById('submitBtn');
+      const successPage = document.getElementById('successPage');
+      const phoneInput = document.getElementById('phone');
+      const phoneError = document.getElementById('phoneError');
+      const formspreeUrl = form.action; // Get the URL from the form's action attribute
+
+      // --- 1. Initialize intl-tel-input ---
+      const iti = window.intlTelInput(phoneInput, {
+        initialCountry: "auto",
+        separateDialCode: false, 
+        geoIpLookup: cb => {
+          fetch("https://ipapi.co/json")
+            .then(res => res.json())
+            .then(data => cb(data.country_code))
+            .catch(() => cb("US"));
+        },
+        utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js",
+      });
+
+      // --- Phone Code Logic (unchanged for better UX) ---
+      const setDialCodeInInput = () => {
+        const countryData = iti.getSelectedCountryData();
+        const dialCode = countryData.dialCode ? '+' + countryData.dialCode : '';
+        if (!phoneInput.value || phoneInput.value === dialCode || phoneInput.value.length < dialCode.length) {
+            phoneInput.value = dialCode;
+        }
+      };
+      
+      const enforceDialCodeReadOnly = (e) => {
+          const dialCode = '+' + iti.getSelectedCountryData().dialCode;
+          const dialCodeLength = dialCode.length;
+          const startPos = phoneInput.selectionStart;
+
+          if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length > 1 && !['Backspace', 'Delete'].includes(e.key))) {
+              return;
+          }
+          if (e.key === 'Backspace' && startPos <= dialCodeLength) {
+              e.preventDefault();
+          } else if (e.key === 'Delete' && startPos < dialCodeLength) {
+              e.preventDefault();
+          } else if (startPos < dialCodeLength && e.key.length === 1) {
+              e.preventDefault();
+          }
+      };
+      
+      setDialCodeInInput();
+      phoneInput.addEventListener('countrychange', setDialCodeInInput);
+      phoneInput.addEventListener('keydown', enforceDialCodeReadOnly);
+      phoneInput.addEventListener('input', () => {
+          const dialCode = '+' + iti.getSelectedCountryData().dialCode;
+          if (!phoneInput.value.startsWith(dialCode)) {
+              const cursor = phoneInput.selectionStart;
+              if (phoneInput.value.length > 0) {
+                  let cleanValue = phoneInput.value.replace(dialCode, '').replace(/\+/g, '').trim();
+                  phoneInput.value = dialCode + cleanValue;
+                  phoneInput.setSelectionRange(cursor, cursor);
+              }
+          }
+      });
+      // --- End Phone Code Logic ---
+
+      // --- 2. Handle Form Submission using Formspree (Fetch API) ---
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        
+        // 2a. Run Validation
+        const isPhoneValid = iti.isValidNumber();
+        if (!isPhoneValid) {
+          phoneError.textContent = 'Please enter a valid phone number.';
+          phoneError.style.display = 'block';
+          if (!form.checkValidity()) form.reportValidity();
+          return;
+        } else {
+          phoneError.style.display = 'none';
+        }
+        
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+
+        statusEl.textContent = 'Submitting...';
+        statusEl.style.color = '#0f766e';
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+        
+        // 2b. Prepare FormData object
+        // NOTE: We manually override the phone field with the standardized E.164 number (iti.getNumber())
+        const formData = new FormData(form);
+        formData.set('Phone (E.164)', iti.getNumber()); // Overwrites the input field value with the correct E.164 format
+        
+        try {
+            // 2c. Send data to Formspree endpoint
+            const response = await fetch(formspreeUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json' // Requesting JSON response is better for AJAX forms
+                }
+            });
+
+            // 2d. Handle Formspree response
+            if (response.ok) {
+                // Success: Formspree usually returns a 200 OK or 302 redirect (handled by browser)
+                form.style.display = 'none';
+                successPage.style.display = 'block';
+                statusEl.textContent = '';
+            } else {
+                // Error: Handle Formspree specific errors
+                let errorData = await response.json();
+                
+                // Formspree provides error messages for specific fields or general issues
+                const errorMessage = errorData.error || `Server responded with status: ${response.status}`;
+
+                // Check for common issues like email verification (if using email field) or rate limiting
+                statusEl.textContent = `❌ Submission Error: ${errorMessage}`;
+                statusEl.style.color = 'crimson';
+            }
+
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            statusEl.textContent = '❌ An unexpected network error occurred.';
+            statusEl.style.color = 'crimson';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Register';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
